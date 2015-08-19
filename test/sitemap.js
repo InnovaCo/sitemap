@@ -43,6 +43,24 @@ describe('Sitemap', function() {
 			done();
 		});
 	});
+
+	it('generate with processing instruction', function(done) {
+		generate(path.join(__dirname, 'site-pi'), {includeSitemap: true}, function(err, sitemap) {
+			if (err) {
+				return done(err);
+			}
+
+			var item = getItem.bind(null, sitemap.items);
+
+			assert.equal(sitemap.items.length, 4);
+			assert(item('/about/'));
+			assert(item('/about/embedded-pi/foo/'), 'static sitemap item with inherited prefix');
+			assert(item('/about/embedded-pi/a/include-it/'), 'generated sitemap item with inherited prefix');
+			assert(item('/about/embedded-pi/a/'));
+
+			done();
+		});
+	});
 });
 
 function getItem(items, url) {
